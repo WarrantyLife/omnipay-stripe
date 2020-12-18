@@ -25,6 +25,17 @@ class CreateSubscriptionRequest extends AbstractRequest
     }
 
     /**
+     * Set the plan
+     *
+     * @param $value
+     * @return \Omnipay\Common\Message\AbstractRequest|CreateSubscriptionRequest
+     */
+    public function setPlan($value)
+    {
+        return $this->setParameter('plan', $value);
+    }
+
+    /**
      * Get quantity
      * @return int
      */
@@ -43,17 +54,6 @@ class CreateSubscriptionRequest extends AbstractRequest
     }
 
     /**
-     * Set the plan
-     *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest|CreateSubscriptionRequest
-     */
-    public function setPlan($value)
-    {
-        return $this->setParameter('plan', $value);
-    }
-
-    /**
      * Get the tax percent
      *
      * @return string
@@ -63,10 +63,19 @@ class CreateSubscriptionRequest extends AbstractRequest
         return $this->getParameter('tax_percent');
     }
 
+    /**
+     * Set the tax percentage
+     *
+     * @param $value
+     * @return \Omnipay\Common\Message\AbstractRequest|CreateSubscriptionRequest
+     */
+    public function setTaxPercent($value)
+    {
+        return $this->setParameter('tax_percent', $value);
+    }
 
     /**
      * Get the the trial end timestamp
-     *
      * @return int
      */
     public function getTrialEnd()
@@ -86,27 +95,64 @@ class CreateSubscriptionRequest extends AbstractRequest
     }
 
     /**
-     * Set the tax percentage
+     * @return array
+     */
+    public function getPhases()
+    {
+        return $this->getParameter('phases');
+    }
+
+    /**
+     * If this is set then a subscription schedule is created, which implicitly creates a subscription
+     * @param array $value
+     * @return \Omnipay\Common\Message\AbstractRequest|CreateSubscriptionRequest
+     */
+    public function setPhases($value)
+    {
+        return $this->setParameter('phases', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStartDate()
+    {
+        return $this->getParameter('start_date');
+    }
+
+    /**
+     * Set the plan
      *
      * @param $value
      * @return \Omnipay\Common\Message\AbstractRequest|CreateSubscriptionRequest
      */
-    public function setTaxPercent($value)
+    public function setStartDate($value)
     {
-        return $this->setParameter('tax_percent', $value);
+        return $this->setParameter('start_date', $value);
     }
 
     public function getData()
     {
-        $this->validate('customerReference', 'plan');
+        $this->validate('customerReference');
 
-        $data = array(
-            'items[0][price]' => $this->getPlan(),
-            'items[0][quantity]' => $this->getQuantity()
-        );
+        if($phases = $this->getPhases()) {
+            for($i=0; $i<count($phases); $i++) {
+                $data['phases['.$i . ']'] = $phases[$i];
+            }
+            $data['customer'] = $this->getCustomerReference();
+        } else {
+            $data = [
+                'items[0][price]' => $this->getPlan(),
+                'items[0][quantity]' => $this->getQuantity()
+            ];
+        }
+
+        if ($this->parameters->has('start_date')) {
+            $data['start_date'] = $this->getParameter('start_date');
+        }
 
         if ($this->parameters->has('tax_percent')) {
-            $data['tax_percent'] = (float)$this->getParameter('tax_percent');
+            $data['tax_percent'] = $this->getParameter('tax_percent');
         }
 
         if ($this->getMetadata()) {
@@ -121,6 +167,10 @@ class CreateSubscriptionRequest extends AbstractRequest
 
     public function getEndpoint()
     {
-        return $this->endpoint.'/customers/'.$this->getCustomerReference().'/subscriptions';
+        if($this->getPhases()) {
+            return $this->endpoint.'/subscription_schedules';
+        } else {
+            return $this->endpoint . '/customers/' . $this->getCustomerReference() . '/subscriptions';
+        }
     }
 }
