@@ -100,6 +100,20 @@ class Gateway extends AbstractGateway
         return $this->createRequest('\Omnipay\Stripe\Message\DeleteCardRequest', $parameters);
     }
 
+    /**
+     * Create Customer Portal Session.
+     *
+     * Creates a new session to the Stripe Customer Portal
+     *
+     * @param array $parameters
+     *
+     * @return \Omnipay\Stripe\Message\CreateCustomerPortalSessionRequest
+     */
+    public function createCustomerPortalSession(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Stripe\Message\CreateCustomerPortalSessionRequest', $parameters);
+    }
+
     //
     // Tokens
     // @link https://stripe.com/docs/api#tokens
