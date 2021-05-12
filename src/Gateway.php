@@ -114,6 +114,20 @@ class Gateway extends AbstractGateway
         return $this->createRequest('\Omnipay\Stripe\Message\CreateCustomerPortalSessionRequest', $parameters);
     }
 
+    /**
+     * Create Ephemeral Key to the Customer API
+     *
+     * Creates a new ephemeral key to the Stripe Customer API.
+     *
+     * @param array $parameters
+     *
+     * @return \Omnipay\Stripe\Message\CreateEphemeralKeyRequest
+     */
+    public function createEphemeralKey(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Stripe\Message\CreateEphemeralKeyRequest', $parameters);
+    }
+
     //
     // Tokens
     // @link https://stripe.com/docs/api#tokens

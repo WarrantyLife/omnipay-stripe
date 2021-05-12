@@ -50,7 +50,7 @@ class UpdateCustomerRequest extends AbstractRequest
      * Sets the customer's email address.
      *
      * @param string $value
-     * @return CreateCustomerRequest provides a fluent interface.
+     * @return \Omnipay\Common\Message\AbstractRequest|UpdateCustomerRequest
      */
     public function setEmail($value)
     {
@@ -66,16 +66,33 @@ class UpdateCustomerRequest extends AbstractRequest
     {
         return $this->getParameter('source');
     }
+
+    /**
+     * @return array
+     */
+    public function getInvoiceSettings()
+    {
+        return $this->getParameter('invoice_settings');
+    }
+
+    /**
+     * @param array $value
+     * @return \Omnipay\Common\Message\AbstractRequest|UpdateCustomerRequest
+     */
+    public function setInvoiceSettings($value)
+    {
+        return $this->setParameter('invoice_settings', $value);
+    }
     
     /**
      * Sets the customer's source.
      *
      * @param string $value
-     * @return CreateCustomerRequest provides a fluent interface.
+     * @return \Omnipay\Common\Message\AbstractRequest|UpdateCustomerRequest
      */
     public function setSource($value)
     {
-        $this->setParameter('source', $value);
+        return $this->setParameter('source', $value);
     }
 
     public function getData()
@@ -86,7 +103,9 @@ class UpdateCustomerRequest extends AbstractRequest
 
         if ($this->getToken()) {
             $data['card'] = $this->getToken();
-        } elseif ($this->getCard()) {
+        }
+
+        if ($this->getCard()) {
             $this->getCard()->validate();
             $data['card'] = $this->getCardData();
             $data['email'] = $this->getCard()->getEmail();
@@ -100,6 +119,10 @@ class UpdateCustomerRequest extends AbstractRequest
 
         if ($this->getSource()) {
             $data['source'] = $this->getSource();
+        }
+
+        if ($this->getInvoiceSettings()) {
+            $data['invoice_settings'] = $this->getInvoiceSettings();
         }
 
         return $data;
