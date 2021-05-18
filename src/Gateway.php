@@ -73,6 +73,16 @@ class Gateway extends AbstractGateway
         return $this->createRequest('\Omnipay\Stripe\Message\PaymentIntents\FetchPaymentMethodRequest', $parameters);
     }
 
+    /**
+     * @inheritdoc
+     *
+     * @return \Omnipay\Stripe\Message\PaymentIntents\AttachPaymentMethodRequest
+     */
+    public function attachPaymentMethod(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Stripe\Message\PaymentIntents\AttachPaymentMethodRequest', $parameters);
+    }
+
     //
     // Cards
     // @link https://stripe.com/docs/api#cards
